@@ -31,8 +31,8 @@ def read_file(file_name):
     )
     return text_splitter.split_documents(documents)
 
-# 문서 청크 리스트가 있으면 요약을 해주는 함수
-def summarize_documents(txt_input):
+# 문서 청크 리스트가 있으면 번역을 해주는 함수
+def translate_documents(txt_input):
 
     map_prompt_template = """
     - you are a professional translator
@@ -40,7 +40,7 @@ def summarize_documents(txt_input):
     - only respond with the translation
     {text}
     """
-    summary_result = ""
+    translation_result = ""
     message_placeholder = st.empty()
     
     for doc in txt_input:
@@ -48,8 +48,8 @@ def summarize_documents(txt_input):
         stream_generator = llm.stream(prompt_text)
         
         for chunk in stream_generator:
-            summary_result += chunk
-            message_placeholder.markdown(summary_result)
+            translation_result += chunk
+            message_placeholder.markdown(translation_result)
 
 # Streamlit 앱의 제목 구성
 st.title(" 🦜 PDF을 번역해드려요")
@@ -58,8 +58,8 @@ def main():
     """
     Streamlit 앱을 실행하는 메인 함수.
     """
-    if 'summary_result' not in st.session_state:
-        st.session_state.summary_result = ""
+    if 'translation_result' not in st.session_state:
+        st.session_state.translation_result = ""
 
     st.markdown("#### PDF 업로드 ▼ ")
     uploaded_file = st.file_uploader('pdfuploader', label_visibility="hidden", accept_multiple_files=False, type="pdf")
@@ -67,7 +67,7 @@ def main():
     if uploaded_file is not None:
         txt_input = read_file(uploaded_file)
         with st.spinner("문서를 번역하는 중..."):
-            summarize_documents(txt_input)
+            translate_documents(txt_input)
 
 if __name__ == "__main__":
     main()
